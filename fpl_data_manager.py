@@ -3,6 +3,9 @@ import sqlite3
 import requests
 from datetime import date
 
+
+
+
 class FPLDataManager:
     def __init__(self, db_path):
 
@@ -61,7 +64,7 @@ class FPLDataManager:
             name = team['name']
             short_name = team['short_name']
 
-            #INSET it into table
+            #INSERT it into table
             update_team_command = """INSERT OR IGNORE INTO teams (team_id, team_name, short_name) VALUES (?,?,?)"""
 
             self.cursor.execute(update_team_command, (team_id, name, short_name))
@@ -158,8 +161,24 @@ class FPLDataManager:
         self.connection.commit()
         print("Player Daily Log Updated")
 
+    #TODO:FIGURE OUT HOW TO PROPERLY WORK THIS HELPER METHOD
+    #helper function for query
+    def _query(self, sql:str, params: tuple = ()) -> list:
+        try:
+            self.cursor.execute(sql, params)
+            rows = self.cursor.fetchall()
+            return rows
+        except sqlite3.Error as e:
+            print(f"Database query error: {e}")
+            return []
+        
+    #TODO: FINISH THE GET_TOP_PLAYERS FUNCTION NEEED TO WORK ON HELPER METHODS
+    def get_top_players(self, position, limit: int = 20, target_stat, order_by):
+        where = "WHERE position = ?" if position else ""
+        params = (position,) if position else ()
+        rows = self._query()
 
-
+        
 
     
 
