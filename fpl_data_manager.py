@@ -173,11 +173,16 @@ class FPLDataManager:
             return []
         
     #TODO: FINISH THE GET_TOP_PLAYERS FUNCTION NEEED TO WORK ON HELPER METHODS
-    def get_top_players(self, position, limit: int = 20, target_stat, order_by):
+    def get_top_players(self, position, limit: int = 20, target_stat="total_points", order_by="DESK"):
+        #WHERE claus and parameters
         where = "WHERE position = ?" if position else ""
         params = (position,) if position else ()
         rows = self._query()
-
+        sql = f"SELECT * FROM players {where} ORDER BY {target_stat} {order_by} LIMIT ?"
+        #Add limit to params
+        params = params + {limit,}
+        rows = self.query(sql, params)
+        return rows
         
 
     
