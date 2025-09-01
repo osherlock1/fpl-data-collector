@@ -21,7 +21,7 @@ def main():
     #Run analysis and plot
     if args.analyze:
 
-        top_players = db_manager.get_top_players(3, 10, "total_points", order_by="DESC")
+        top_players = db_manager.get_top_players(4, 30, "total_points", order_by="DESC")
         print(top_players)
 
 

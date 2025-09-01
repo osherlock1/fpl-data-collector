@@ -173,21 +173,42 @@ class FPLDataManager:
             return []
         
     #TODO: FINISH THE GET_TOP_PLAYERS FUNCTION NEEED TO WORK ON HELPER METHODS
-    def get_top_players(self, position, limit: int = 20, target_stat="total_points", order_by="DESC"):
+    def get_top_players(self, position, limit: int = 20, target_stat="total_points", order_by="DESC", target_date: str = None):
+
+        #Set date as today if not specified
+        if target_date is None:
+            target_date = date.today().isoformat()
+
+        #Check for valid taget_stat
+        valid_stats = {"now_cost", "total_points", "form", "ep_next", "selected_by_percent", "minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded", "bonus", "bps", "chance_of_playing_next_round", "status"}
+
+        if target_stat not in valid_stats:
+            raise ValueError(f"Invalid target_stat: {target_stat}")
+
+        #Build where clause for date
+        where_clauses = ["player_daily_stats.log_date = ?"]
+        params = [target_date]
+
+        if position:
+            where_clauses.append("players.position_id = ?")
+            params.append(position)
+
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+
         #WHERE claus and parameters
-        where = "WHERE players.position_id = ?" if position else ""
-        params = (position,) if position else ()
-        sql = f"""
-            SELECT player_daily_stats.*, players.position_id
+
+        sql = f""" 
+            SELECT players.web_name, player_daily_stats.*, players.position_id
             FROM player_daily_stats
             JOIN players ON player_daily_stats.player_id = players.player_id
-            {where}
+            {where_sql}
             ORDER BY player_daily_stats.{target_stat} {order_by}
             LIMIT ?
             """
         #Add limit to params
-        params = params + (limit,)
-        rows = self._query(sql, params)
+
+        params.append(limit)
+        rows = self._query(sql, tuple(params))
         return rows
         
 
