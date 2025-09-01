@@ -11,6 +11,7 @@ class FPLDataManager:
 
         self.fpl_api_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
         self.connection = sqlite3.connect(db_path)
+        self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
         #API call
@@ -209,6 +210,7 @@ class FPLDataManager:
 
         params.append(limit)
         rows = self._query(sql, tuple(params))
+        rows = [dict(row) for row in rows]
         return rows
         
 

@@ -21,9 +21,15 @@ def main():
     #Run analysis and plot
     if args.analyze:
 
-        top_players = db_manager.get_top_players(4, 30, "total_points", order_by="DESC")
-        print(top_players)
+        top_players = db_manager.get_top_players(2, 30, "total_points", order_by="DESC")
 
+
+        desired_keys = ["web_name", "total_points"]
+
+        for player in top_players:
+            for key in desired_keys:
+                print(f"{key}: {player[key]}")
+            print("---")
 
 if __name__ == "__main__":
     main()
